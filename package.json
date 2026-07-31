@@ -1,0 +1,13 @@
+{
+  "name": "cloud-itonami-kadou",
+  "private": true,
+  "type": "module",
+  "comment": "Edge build: shadow-cljs compiles src/kadou/edge/endpoints.cljc's :cljs branch into functions/edge/kadou-edge-core.js, re-exported by the thin functions/api/*.js shim.",
+  "scripts": {
+    "build-edge": "npx shadow-cljs release edge-api",
+    "deploy": "wrangler pages deploy public --project-name=cloud-itonami-kadou"
+  },
+  "devDependencies": {
+    "shadow-cljs": "^2.28.0"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cloud-itonami-kadou",
+  "pages_build_output_dir": "public",
+  "compatibility_date": "2026-07-31",
+  "vars": {
+    // DID -> worker id, comma separated:
+    //   "did:key:z6Mk...=w-1,did:key:z6Ml...=w-2"
+    //
+    // ABSENT OR EMPTY MEANS THE ENDPOINT SERVES 503, not that it serves
+    // openly. That is deliberate: /api/observations is a write path into
+    // a store of personal data about workers, and an ingest that defaults
+    // to open is a public one.
+    //
+    // The map (rather than a list) is what carries kadou's self-capture
+    // rule to the edge: the worker id comes from the verified DID, never
+    // from the request body, so a signed caller cannot submit someone
+    // else's samples even before the governor sees the request.
+    "KADOU_CALLER_ALLOWLIST": ""
+  }
+}

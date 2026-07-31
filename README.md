@@ -67,11 +67,15 @@ redacts `:session/detail` before the prompt unless the caller passes
 what make it surveillance, so sending them off-device is a decision, not a
 default.
 
-## Capture agent
+## Capture agents
 
-`tools/capture.cljs` (nbb, macOS) polls what is in front of the worker and emits
-`kotoba.activity/observation` maps, one EDN map per line. It writes nothing to
-the actor — the samples still have to pass the governor's consent check.
+Three collectors, all nbb, all emitting `kotoba.activity/observation` maps one
+EDN map per line. None of them writes to the actor: the samples still have to
+pass the governor's consent check.
+
+### `tools/capture.cljs` — desktop
+
+Polls what is in front of the worker.
 
 ```bash
 nbb --classpath ../../kotoba-lang/activity/src tools/capture.cljs \
@@ -89,6 +93,47 @@ Scopes mirror the consent scopes:
 A sample taken while keyboard and mouse have been quiet longer than
 `--idle-after` (default 180s) is marked `:idle? true`. Segmentation drops those,
 so an idle stretch becomes a gap rather than billable time.
+
+### `tools/collect-vcs.cljs` — git
+
+```bash
+nbb --classpath ../../kotoba-lang/activity/src tools/collect-vcs.cljs \
+    --worker w-1 --repo /path/to/repo --since 2026-07-01 --redact
+```
+
+**A commit becomes one instant, never a span.** A commit records when work was
+*finished*; the interval between two commits is not time spent — 09:00 and 17:00
+may be eight hours of work or two, with lunch and a meeting in between. So each
+commit emits a single observation and `segment` gathers runs of them with the
+same idle-gap rule it applies to app samples. An isolated commit produces a
+session below the floor and is dropped. That undercounts, for the same reason
+the desktop collector does: the alternative is inventing the interval.
+
+Author date, not committer date — a rebase rewrites the committer date, and
+rewriting history should not move when someone worked. `--redact` drops the
+commit subject, which is the part that names the feature, the client, the bug.
+
+### `tools/collect-calendar.cljs` — calendar
+
+```bash
+nbb --classpath ../../kotoba-lang/activity/src tools/collect-calendar.cljs \
+    --worker w-1 --ics ~/calendar.ics --interval 5
+```
+
+**A file, not an API.** A calendar API would need an OAuth token with standing
+read access to everything on someone's calendar, held by a capture agent and
+refreshed forever — a much larger grant than "these events, this month", and one
+the worker cannot easily take back. An export is a decision made once, for a
+bounded range, with a file they can inspect first.
+
+This is the one collector whose source knows both ends, so it dense-samples
+*across* each event and segmentation reconstructs the span exactly. What it does
+**not** assume is that the meeting happened, ran to time, or was attended;
+declined events are excluded by default and the output says so in as many words.
+Events with a floating or zoned `DTSTART` are read as UTC and counted in a
+warning rather than silently shifted. Recurrence is not expanded — that needs a
+timezone database and the exception rules, and a half-correct expansion would
+invent occurrences that never happened.
 
 ## Operations
 
@@ -124,10 +169,45 @@ declaration of what their apps mean, not a policy applied to them.
 |---|---|
 | Role | actor (advisor ⊣ governor ⊣ ledger) |
 | Capability library | `kotoba-lang/activity` (sibling path) |
-| Tests | 26 tests, 79 assertions, all green |
-| Capture agent | macOS, exercised on real `lsappinfo` / `ioreg` output |
-| Store | `MemStore` only — no Datomic/kotoba-server backend yet |
-| Deployment | none — no endpoint, no scheduled loop |
+| Tests | 53 tests, 171 assertions, all green |
+| Capture agents | desktop (macOS), git, calendar — all exercised on real input |
+| Store | `MemStore` + `DatomicStore` (langchain.db), proved interchangeable by a contract test |
+| Deployment | Cloudflare Pages Functions — `POST /api/observations`, CACAO + allow-list gated |
+
+## Store backends
+
+`MemStore` (atom, zero deps) and `DatomicStore` (`langchain.db`) implement the
+same protocol and pass the same contract test, so the actor, the governor and
+the ledger never know which they run on. `DatomicStore` is pure `.cljc`: it runs
+offline against an in-process DataScript, and the same record points at a real
+Datomic or a kotoba-server pod by swapping `langchain.db`'s `:db-api`.
+
+That contract test earned its keep immediately — it caught `MemStore`'s
+`revoke-consent!` fabricating a consent record for a worker who never had one,
+which the Datomic-backed store correctly declined to do. A phantom grant is the
+worst possible thing to have near a hold that has no escalation path.
+
+## HTTP surface
+
+One route, permanently: `POST /api/observations`. A capture agent on a laptop
+genuinely needs a network path; the other three ops end in a human's judgement,
+so `:attribute-session`, `:submit-timesheet` and `:disclose-report` have no HTTP
+representation at all — a test asserts their core fns do not exist.
+
+Two gates, neither optional: a CACAO signature and temporal window
+(`cacao.edge.verify`, the shared library, not reimplemented here), then an
+allow-list that maps **DID → worker id**. The map rather than a set is what
+carries the self-capture rule to the edge: the worker comes from the verified
+DID and never from the request body, so a signed caller cannot submit someone
+else's samples even before the governor sees the request.
+
+**An absent allow-list serves 503, never an open endpoint.** A capture ingest
+that defaults to open is a public write path into a store of personal data about
+workers.
+
+Build the edge bundle with `npx shadow-cljs release edge-api` (never `compile` —
+its dev artifact imports a machine-local path and cannot load on a Pages Function
+runtime), then ship `public/` with wrangler.
 
 ## Test
 

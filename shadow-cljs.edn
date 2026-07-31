@@ -1,0 +1,17 @@
+;; Edge build for the Cloudflare Pages Function surface — mirrors
+;; cloud-itonami-isic-6492's :edge-api build (:target :esm, one shared
+;; bundle, thin functions/api/**.js re-export shims).
+;;
+;; REBUILD: `npx shadow-cljs release edge-api` — NOT `compile`, whose
+;; dev-mode artifact imports a machine-local path and cannot load
+;; standalone on a Pages Function runtime (the same caveat isic-6492 and
+;; cloud-itonami-commitment-ledger both document).
+{:deps {:aliases [:cljs]}
+ :builds
+ {:edge-api
+  {:target :esm
+   :output-dir "functions/edge"
+   :modules {:kadou-edge-core
+             {:exports {observationsOnRequestPost
+                        kadou.edge.endpoints/on-request-post-observations}}}
+   :compiler-options {:output-feature-set :es2020 :infer-externs :auto}}}}
