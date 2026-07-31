@@ -1,0 +1,21 @@
+[{:itonami.blueprint/id "kadou"
+  :itonami.blueprint/name "Kadou — automatic work-time capture"
+  ;; Deliberately no :itonami.blueprint/isic-rev5 or /isco-08. The ISIC and
+  ;; ISCO families model a SECTOR's or an OCCUPATION's business; kadou is a
+  ;; horizontal capability every one of them could use. Claiming 6209 to
+  ;; make the shape uniform would put a false code in the query plane.
+  :itonami.blueprint/family :horizontal-capability
+  :itonami.blueprint/domain :labor/work-time
+  :itonami.blueprint/license "AGPL-3.0-or-later"
+  :itonami.blueprint/social-impact [:fair-pay :worker-data-sovereignty :anti-surveillance]
+  :itonami.blueprint/governor :kadou-governor
+  :itonami.blueprint/capability-library "kotoba-lang/activity"
+  :itonami.blueprint/required-technologies [:identity :audit-ledger :consent :dmn]
+  :itonami.blueprint/competes-with
+  ;; The category the fleet had no answer to, measured 2026-07-31.
+  {:automatic-capture ["Timely" "Memtime" "Rize" "Clockk" "DeskTime" "RescueTime"]
+   :adjacent-general ["Toggl Track" "Clockify" "Harvest" "TimeCamp"]
+   :adjacent-psa ["Kantata" "BigTime" "Deltek Vantagepoint" "NetSuite OpenAir"]}
+  :itonami.blueprint/status :public-oss
+  :itonami.blueprint/maturity :implemented
+  :db/id -1}]
