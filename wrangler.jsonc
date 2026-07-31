@@ -16,6 +16,18 @@
     // rule to the edge: the worker id comes from the verified DID, never
     // from the request body, so a signed caller cannot submit someone
     // else's samples even before the governor sees the request.
-    "KADOU_CALLER_ALLOWLIST": ""
+    "KADOU_CALLER_ALLOWLIST": ""    ,
+    // How this deployment stores what it accepts.
+    //
+    //   (unset)     every request is refused with 503 "no store configured"
+    //   ephemeral   an in-process store that does NOT survive the request —
+    //               a smoke test, and every success response carries
+    //               "ephemeral": true so nobody mistakes it for persistence
+    //
+    // Unset is the default ON PURPOSE. An empty in-process store would fail
+    // the governor's registration check and return 409 :no-worker, blaming
+    // the caller for a deployment that has no store at all. A durable
+    // backend is not wired yet; see the repo's CLAUDE.md.
+    "KADOU_STORE": ""
   }
 }

@@ -41,7 +41,9 @@ Datomic side did not have.
 
 The HTTP surface is **one route**: `POST /api/observations`. The escalating ops
 have no HTTP representation and a test asserts their core fns do not exist. An
-absent allow-list serves **503**, never an open endpoint.
+absent allow-list serves **503**, never an open endpoint, and so does an unset
+`KADOU_STORE` — refusing beats returning `:no-worker` and blaming the caller
+for a deployment that has no store.
 
 ## Test
 

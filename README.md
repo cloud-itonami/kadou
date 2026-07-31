@@ -201,7 +201,15 @@ carries the self-capture rule to the edge: the worker comes from the verified
 DID and never from the request body, so a signed caller cannot submit someone
 else's samples even before the governor sees the request.
 
-**An absent allow-list serves 503, never an open endpoint.** A capture ingest
+**An absent allow-list serves 503, never an open endpoint.**
+
+A second refusal sits in front of it: with `KADOU_STORE` unset the endpoint serves
+**503 "no store configured"** without verifying anything. That is not caution for
+its own sake — an empty in-process store fails the governor's registration check,
+so the caller would get `409 :no-worker` and go looking at their own registration
+while the actual fault is a deployment with no store. `KADOU_STORE=ephemeral`
+enables a non-persisting smoke test, and every success response then carries
+`"ephemeral": true`. A durable backend is not wired yet. A capture ingest
 that defaults to open is a public write path into a store of personal data about
 workers.
 

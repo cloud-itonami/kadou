@@ -93,8 +93,39 @@
     (catch #?(:clj Exception :cljs :default) _ nil)))
 
 ;; ---------------------------------------------------------------------------
-;; Route core — portable, no platform
+;; Store selection
 ;; ---------------------------------------------------------------------------
+
+(defn store-mode
+  "How this deployment is configured to store what it accepts, from the
+  `KADOU_STORE` env var.
+
+    nil          nothing configured
+    :ephemeral   an in-process store that does not survive the request
+
+  Returns nil for anything else, including an unrecognised value — a typo
+  in a deployment variable must not silently select a storage mode.
+
+  Portable (takes a plain map) so the decision is testable without a
+  platform; the `:cljs` entry point converts Cloudflare's `env` into one."
+  [env]
+  (case (some-> (get env "KADOU_STORE") .trim)
+    "ephemeral" :ephemeral
+    nil))
+
+(defn store-unconfigured-response
+  "What to serve when no store mode is configured.
+
+  Deliberately 503 and NOT an empty in-process store. An empty store makes
+  every request fail the governor's registration check, so the caller is
+  told `:no-worker` — blamed for a deployment that has no store at all.
+  Misattributed blame is worse than a refusal: the operator goes looking
+  at their own registration while the actual fault is here."
+  []
+  {:status 503
+    :body {:ok false :error "no store configured"
+           :hint "bind a durable store, or set KADOU_STORE=ephemeral for a
+                  non-persisting smoke test"}})
 
 (defn record-observations-core!
   "`POST /api/observations`.
@@ -109,7 +140,7 @@
     409  the governor held it; the violations are in the body, because a
          capture agent whose samples are being refused needs to know why
     200  committed"
-  [store allowlist caller-did raw-body]
+  [store mode allowlist caller-did raw-body]
   (cond
     (nil? allowlist)
     {:status 503 :body {:ok false :error "no allow-list configured"}}
@@ -128,7 +159,7 @@
             disposition (get-in r [:state :disposition])]
         (if (= :commit disposition)
           {:status 200
-           :body {:ok true :worker worker-id
+           :body {:ok true :ephemeral (= :ephemeral mode) :worker worker-id
                   :recorded (count (:observations body))
                   :total (count (store/observations-of store worker-id))}}
           {:status 409
@@ -154,12 +185,13 @@
      `record-observations-core!`. Contains no policy of its own — every
      decision above is made by the core fn or by the governor beneath it.
 
-     The store is constructed per request. A Pages Function is
-     stateless, so this is a `MemStore` unless `env` carries a durable
-     backend; wiring one is a matter of swapping the constructor, which
-     is what the Store protocol seam exists for."
+     Refuses BEFORE verifying anything when no store mode is configured:
+     a deployment with no store cannot honour a write, and an empty
+     in-process store would fail the governor's registration check and
+     blame the caller for it."
      [context]
      (let [env (aget context "env")
+           mode (store-mode {"KADOU_STORE" (aget env "KADOU_STORE")})
            allowlist (parse-allowlist (aget env "KADOU_CALLER_ALLOWLIST"))
            header (or (.get (aget (aget context "request") "headers") "authorization") "")
            token (if (.startsWith header "Bearer ") (subs header 7) header)]
@@ -168,12 +200,17 @@
            (.then (fn [results]
                     (let [v (aget results 0)
                           raw (aget results 1)]
-                      (if-not (:valid v)
+                      (cond
+                        (nil? mode)
+                        (json-response (store-unconfigured-response))
+
+                        (not (:valid v))
                         (json-response {:status 401
-                                        :body {:ok false :error "invalid or expired CACAO"}})
-                        (json-response
-                         (record-observations-core! (store/mem-store) allowlist
-                                                    (:iss v) raw))))))
+                                                        :body {:ok false :error "invalid or expired CACAO"}})
+
+                        :else
+                        (json-response (record-observations-core! (store/mem-store) mode
+                                                      allowlist (:iss v) raw))))))
            (.catch (fn [e]
                      (json-response {:status 500
                                      :body {:ok false :error "request failed"
