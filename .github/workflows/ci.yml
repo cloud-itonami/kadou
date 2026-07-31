@@ -5,10 +5,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: fetch sibling capability library
+      - name: fetch sibling capability libraries
+        # The workspace resolves these by :local/root; a bare CI checkout
+        # has no sibling tree, so clone the chain. langchain-store itself
+        # reaches for langchain (langchain.db), hence both.
         run: |
           mkdir -p ../../kotoba-lang
           git clone https://github.com/kotoba-lang/activity.git ../../kotoba-lang/activity
+          git clone https://github.com/kotoba-lang/langchain-store.git ../../kotoba-lang/langchain-store
+          git clone https://github.com/kotoba-lang/langchain.git ../../kotoba-lang/langchain
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
