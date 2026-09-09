@@ -4,3 +4,6 @@
 capture.edn
 /node_modules/
 /.shadow-cljs/
+
+# nbb dependency cache -- a build artifact, not source
+.nbb/
