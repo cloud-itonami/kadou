@@ -7,7 +7,7 @@
 ;; KadouGovernor's consent check, and an agent that could commit its own
 ;; output would be the whole point defeated.
 ;;
-;;   nbb --classpath ../../kotoba-lang/activity/src tools/capture.cljs \
+;;   nbb --classpath ../../kotoba-lang/activity/src tools/capture.cljk \
 ;;       --worker w-1 --interval 30 --seconds 600 --out capture.edn
 ;;
 ;; Scopes mirror the consent scopes the governor enforces, and the default

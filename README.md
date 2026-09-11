@@ -73,12 +73,12 @@ Three collectors, all nbb, all emitting `kotoba.activity/observation` maps one
 EDN map per line. None of them writes to the actor: the samples still have to
 pass the governor's consent check.
 
-### `tools/capture.cljs` — desktop
+### `tools/capture.cljk` — desktop
 
 Polls what is in front of the worker.
 
 ```bash
-nbb --classpath ../../kotoba-lang/activity/src tools/capture.cljs \
+nbb --classpath ../../kotoba-lang/activity/src tools/capture.cljk \
     --worker w-1 --interval 30 --seconds 600 --out capture.edn
 ```
 
@@ -94,10 +94,10 @@ A sample taken while keyboard and mouse have been quiet longer than
 `--idle-after` (default 180s) is marked `:idle? true`. Segmentation drops those,
 so an idle stretch becomes a gap rather than billable time.
 
-### `tools/collect-vcs.cljs` — git
+### `tools/collect-vcs.cljk` — git
 
 ```bash
-nbb --classpath ../../kotoba-lang/activity/src tools/collect-vcs.cljs \
+nbb --classpath ../../kotoba-lang/activity/src tools/collect-vcs.cljk \
     --worker w-1 --repo /path/to/repo --since 2026-07-01 --redact
 ```
 
@@ -113,10 +113,10 @@ Author date, not committer date — a rebase rewrites the committer date, and
 rewriting history should not move when someone worked. `--redact` drops the
 commit subject, which is the part that names the feature, the client, the bug.
 
-### `tools/collect-calendar.cljs` — calendar
+### `tools/collect-calendar.cljk` — calendar
 
 ```bash
-nbb --classpath ../../kotoba-lang/activity/src tools/collect-calendar.cljs \
+nbb --classpath ../../kotoba-lang/activity/src tools/collect-calendar.cljk \
     --worker w-1 --ics ~/calendar.ics --interval 5
 ```
 

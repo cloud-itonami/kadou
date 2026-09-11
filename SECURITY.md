@@ -3,7 +3,7 @@
 Unlike the blueprint-only repos in this fleet, this one ships a capture agent
 that runs on a real machine and reads what is in front of the person using it.
 
-- `tools/capture.cljs` writes only to stdout or the `--out` file you name. It
+- `tools/capture.cljk` writes only to stdout or the `--out` file you name. It
   makes no network call and cannot reach the actor.
 - `--scopes app` (the default) reads `lsappinfo` and `ioreg` and needs no
   special permission. `--scopes app,window` reads window titles via System

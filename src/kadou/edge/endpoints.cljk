@@ -81,8 +81,8 @@
   map with a non-empty observation vector.
 
   EDN rather than JSON because that is what the collectors emit
-  (`tools/capture.cljs`, `tools/collect-vcs.cljs`,
-  `tools/collect-calendar.cljs`) and because a JSON round-trip would have
+  (`tools/capture.cljk`, `tools/collect-vcs.cljk`,
+  `tools/collect-calendar.cljk`) and because a JSON round-trip would have
   to guess how to turn `\"obs/at\"` back into a namespaced keyword. Read
   with `clojure.edn/read-string`, which evaluates nothing."
   [s]
