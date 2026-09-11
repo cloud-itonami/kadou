@@ -41,7 +41,7 @@ Tuesday.
 ## 2. Capture
 
 ```bash
-nbb --classpath ../../kotoba-lang/activity/src tools/capture.cljs \
+nbb --classpath ../../kotoba-lang/activity/src tools/capture.cljk \
     --worker w-1 --interval 30 --seconds 28800 --out capture.edn
 ```
 

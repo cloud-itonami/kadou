@@ -3,10 +3,10 @@
 ;;
 ;; Emits `kotoba.activity/observation` maps from a git repository's own
 ;; history, one EDN map per line, for `:op :record-observations`. Like
-;; tools/capture.cljs it writes nothing to the actor: the samples still
+;; tools/capture.cljk it writes nothing to the actor: the samples still
 ;; have to pass the KadouGovernor's consent check.
 ;;
-;;   nbb --classpath ../../kotoba-lang/activity/src tools/collect-vcs.cljs \
+;;   nbb --classpath ../../kotoba-lang/activity/src tools/collect-vcs.cljk \
 ;;       --worker w-1 --repo /path/to/repo --since 2026-07-01 --out vcs.edn
 ;;
 ;; ## Why a commit becomes ONE observation and not a span
