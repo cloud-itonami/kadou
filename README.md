@@ -78,7 +78,7 @@ pass the governor's consent check.
 Polls what is in front of the worker.
 
 ```bash
-nbb --classpath ../../kotoba-lang/activity/src tools/capture.cljk \
+kbb --backend sci --classpath ../../kotoba-lang/activity/src tools/capture.cljk \
     --worker w-1 --interval 30 --seconds 600 --out capture.edn
 ```
 
@@ -97,7 +97,7 @@ so an idle stretch becomes a gap rather than billable time.
 ### `tools/collect-vcs.cljk` — git
 
 ```bash
-nbb --classpath ../../kotoba-lang/activity/src tools/collect-vcs.cljk \
+kbb --backend sci --classpath ../../kotoba-lang/activity/src tools/collect-vcs.cljk \
     --worker w-1 --repo /path/to/repo --since 2026-07-01 --redact
 ```
 
@@ -116,7 +116,7 @@ commit subject, which is the part that names the feature, the client, the bug.
 ### `tools/collect-calendar.cljk` — calendar
 
 ```bash
-nbb --classpath ../../kotoba-lang/activity/src tools/collect-calendar.cljk \
+kbb --backend sci --classpath ../../kotoba-lang/activity/src tools/collect-calendar.cljk \
     --worker w-1 --ics ~/calendar.ics --interval 5
 ```
 
@@ -214,7 +214,7 @@ enables a non-persisting smoke test, and every success response then carries
 The deploy artifact is **built and exercised**, not merely configured:
 
 ```bash
-npm install && npx shadow-cljs release edge-api   # -> functions/edge/
+npm install && amu compile --target wasm32-browser edge-api   # -> functions/edge/
 node -e "import('./functions/edge/...').then(m => m.observationsOnRequestPost(ctx))"
 ```
 
@@ -228,15 +228,15 @@ leaking source indentation into the JSON `hint`. A capture ingest
 that defaults to open is a public write path into a store of personal data about
 workers.
 
-Build the edge bundle with `npx shadow-cljs release edge-api` (never `compile` —
+Build the edge bundle with `amu compile --target wasm32-browser edge-api` (never `compile` —
 its dev artifact imports a machine-local path and cannot load on a Pages Function
 runtime), then ship `public/` with wrangler.
 
 ## Test
 
 ```bash
-clojure -M:test
-clojure -M:lint
+kbb -M:test
+kbb -M:lint
 ```
 
 ## License

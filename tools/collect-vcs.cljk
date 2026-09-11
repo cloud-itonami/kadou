@@ -1,4 +1,4 @@
-#!/usr/bin/env nbb
+#!/usr/bin/env kbb
 ;; collect-vcs.cljs — version-control collector for the kadou (稼働) actor.
 ;;
 ;; Emits `kotoba.activity/observation` maps from a git repository's own
@@ -6,7 +6,7 @@
 ;; tools/capture.cljk it writes nothing to the actor: the samples still
 ;; have to pass the KadouGovernor's consent check.
 ;;
-;;   nbb --classpath ../../kotoba-lang/activity/src tools/collect-vcs.cljk \
+;;   kbb --backend sci --classpath ../../kotoba-lang/activity/src tools/collect-vcs.cljk \
 ;;       --worker w-1 --repo /path/to/repo --since 2026-07-01 --out vcs.edn
 ;;
 ;; ## Why a commit becomes ONE observation and not a span

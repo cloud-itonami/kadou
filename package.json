@@ -4,7 +4,7 @@
   "type": "module",
   "comment": "Edge build: shadow-cljs compiles src/kadou/edge/endpoints.cljk's :cljs branch into functions/edge/kadou-edge-core.js, re-exported by the thin functions/api/*.js shim.",
   "scripts": {
-    "build-edge": "npx shadow-cljs release edge-api",
+    "build-edge": "amu compile --target wasm32-browser edge-api",
     "deploy": "wrangler pages deploy public --project-name=cloud-itonami-kadou"
   },
   "devDependencies": {
