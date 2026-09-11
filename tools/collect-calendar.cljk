@@ -1,4 +1,4 @@
-#!/usr/bin/env nbb
+#!/usr/bin/env kbb
 ;; collect-calendar.cljs — calendar collector for the kadou (稼働) actor.
 ;;
 ;; Emits `kotoba.activity/observation` maps from an iCalendar (.ics) file,
@@ -6,7 +6,7 @@
 ;; the actor: the samples still have to pass the KadouGovernor's consent
 ;; check.
 ;;
-;;   nbb --classpath ../../kotoba-lang/activity/src tools/collect-calendar.cljk \
+;;   kbb --backend sci --classpath ../../kotoba-lang/activity/src tools/collect-calendar.cljk \
 ;;       --worker w-1 --ics ~/calendar.ics --from 2026-07-01 --out cal.edn
 ;;
 ;; ## A FILE, not an API

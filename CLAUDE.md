@@ -47,4 +47,4 @@ for a deployment that has no store.
 
 ## Test
 
-    clojure -M:test && clojure -M:lint
+    kbb -M:test && kbb -M:lint

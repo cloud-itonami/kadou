@@ -2,7 +2,7 @@
 ;; cloud-itonami-isic-6492's :edge-api build (:target :esm, one shared
 ;; bundle, thin functions/api/**.js re-export shims).
 ;;
-;; REBUILD: `npx shadow-cljs release edge-api` — NOT `compile`, whose
+;; REBUILD: `amu compile --target wasm32-browser edge-api` — NOT `compile`, whose
 ;; dev-mode artifact imports a machine-local path and cannot load
 ;; standalone on a Pages Function runtime (the same caveat isic-6492 and
 ;; cloud-itonami-commitment-ledger both document).

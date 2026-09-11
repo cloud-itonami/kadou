@@ -18,8 +18,8 @@ A change that breaks one is a change to what this actor claims about the world:
 Before opening a PR:
 
 ```bash
-clojure -M:lint
-clojure -M:test
+kbb -M:lint
+kbb -M:test
 ```
 
 `GOVERNANCE.md` lists the rules that are not up for discussion, chiefly that the
