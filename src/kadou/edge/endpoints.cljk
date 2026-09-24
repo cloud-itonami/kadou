@@ -44,7 +44,7 @@
   Cloudflare `context` and produce a `js/Response`."
   (:require [kadou.actor :as actor]
             [kadou.store :as store]
-            #?(:clj [clojure.edn :as edn] :cljs [cljs.reader :as edn])
+            #?(:clj [kotoba.lang.edn :as edn] :cljs [cljs.reader :as edn])
             #?(:cljs [cacao.edge.verify :as cacao])))
 
 ;; ---------------------------------------------------------------------------
