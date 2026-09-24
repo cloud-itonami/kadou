@@ -3,7 +3,7 @@
   platform involved. The `:cljs` `on-request-*` entry point contains no
   policy — it parses a Cloudflare `context` and calls the core fn below —
   so everything worth asserting is here."
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [kotoba.activity :as activity]
             [kadou.store :as store]
             [kadou.edge.endpoints :as edge]))
