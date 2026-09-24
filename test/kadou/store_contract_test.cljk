@@ -10,7 +10,7 @@
   This suite has already earned its keep: it caught `MemStore`'s
   `revoke-consent!` fabricating a consent record for a worker who never
   had one, which the DatomicStore correctly declined to do."
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [kotoba.activity :as activity]
             [kadou.store :as store]
             [kadou.actor :as actor]))
