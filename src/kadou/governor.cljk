@@ -1,7 +1,7 @@
 (ns kadou.governor
   "KadouGovernor — the independent safety/traceability layer for the kadou
   (稼働) automatic work-time capture actor (itonami actor pattern,
-  ADR-2607011000 / CLAUDE.md Actors section). Modeled on
+  ADR-2607011000 / AGENTS.md Actors section). Modeled on
   cloud-itonami-isco-4313's payroll.governor, with the capture-specific
   twist that the governor RE-SEGMENTS the stored observations via
   `kotoba.activity` — the advisor's arithmetic about how long something

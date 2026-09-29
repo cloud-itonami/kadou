@@ -1,4 +1,4 @@
-# CLAUDE.md — cloud-itonami/kadou 稼働
+# AGENTS.md — cloud-itonami/kadou 稼働
 
 Automatic work-time capture actor. itonami pattern: advisor ⊣ independent
 governor ⊣ append-only ledger. Domain arithmetic is `kotoba-lang/activity`; this

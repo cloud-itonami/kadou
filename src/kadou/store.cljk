@@ -2,7 +2,7 @@
   "SSoT for the kadou (稼働) automatic work-time capture actor. Store is a
   protocol injected into the `kadou.actor` StateGraph — `MemStore` is the
   default, deterministic, zero-dep backend (itonami actor pattern,
-  ADR-2607011000 / CLAUDE.md Actors section). Modeled on
+  ADR-2607011000 / AGENTS.md Actors section). Modeled on
   cloud-itonami-isco-4313's payroll.store; the activity-domain records
   (observations, sessions, attributions, timesheet entries) use
   `kotoba.activity`'s record shapes verbatim — this actor CONSUMES
